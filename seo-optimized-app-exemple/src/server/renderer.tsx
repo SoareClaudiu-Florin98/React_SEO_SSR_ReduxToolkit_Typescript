@@ -4,10 +4,13 @@ import Routes from '../Routes'
 import { Provider } from 'react-redux'
 import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore'
 import serialize from 'serialize-javascript'
-import { Helmet } from 'react-helmet'
+import { HelmetProvider } from 'react-helmet-async';
 
-export default (req: any, store: ToolkitStore) => {
+export default (req: any, store: ToolkitStore, scriptTags: string) => {
+  const helmetContext = {};
+
    const content = renderToString(
+    <HelmetProvider context={helmetContext}>
     <Provider store={store}>
       <StaticRouter location={req.url}>
         <div>
@@ -15,23 +18,22 @@ export default (req: any, store: ToolkitStore) => {
         </div>
       </StaticRouter>
     </Provider>
+    </HelmetProvider>
   )
-  const helmet = Helmet.renderStatic();
+
   return `
     <!doctype html>
     <html lang="en">
       <head>
-        ${helmet.title.toString()}
-        ${helmet.meta.toString()}
         <meta charset="utf-8"/>
         <link rel="icon" href="favicon.ico"/>
         <link rel="manifest" href="manifest.json"/>
-        <script defer="defer" src="bundle.js"></script>
        </head>
       <body>
         <div id="root">${content}</div>
-          <script>window.INITIAL_STATE=${serialize(store.getState())}</script>
+        <script>window.INITIAL_STATE=${serialize(store.getState())}</script>
         <script defer="defer" src="bundle.js"></script>
+        ${scriptTags}
       </body>
     </html>
     `

@@ -1,16 +1,16 @@
 import { Outlet } from 'react-router-dom';
 import Header from './components/Header/Header';
 import { fetchCurrentUser } from './services/userService';
-import { Helmet } from 'react-helmet'
+import { Helmet } from 'react-helmet-async';
 
 const App = () => {
     return( 
     <div>
-     <Helmet>
-         <title>React SEO</title>
-         <meta property="og:title" content='React SEO'/>
-     </Helmet>        
-     <Header />
+        <Helmet>
+            <title>React SEO</title>
+            <meta property="og:title" content='React SEO'/>
+        </Helmet>        
+        <Header />
      <Outlet />
     </div>
     );

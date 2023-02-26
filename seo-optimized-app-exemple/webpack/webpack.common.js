@@ -1,6 +1,8 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CopyPlugin = require('copy-webpack-plugin')
+const LoadablePlugin = require('@loadable/webpack-plugin')
+
 module.exports = {
   entry:  path.resolve(__dirname, '..','./src/index.tsx'),
   devtool: 'inline-source-map',
@@ -31,7 +33,7 @@ module.exports = {
 
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname, '..','./dist-client'),
+    path: path.resolve(__dirname, '..','./dist/client'),
   },
   plugins:[
     new HtmlWebpackPlugin({
@@ -44,6 +46,7 @@ module.exports = {
       patterns: [
         {from: path.resolve(__dirname,'..','./public/manifest.json'), to:"manifest.json"}
       ]
-    })
+    }),
+    new LoadablePlugin()
   ]
 };

@@ -1,13 +1,13 @@
 import express from 'express'
-import renderer from './helpers/renderer'
-import { createStore } from './store'
+import renderer from './renderer'
+import { createStore } from '../store'
 import { LoaderFunctionArgs, matchRoutes } from 'react-router-dom'
-import {routes} from './Routes'
+import {routes} from '../Routes'
 import proxy from 'express-http-proxy';
 import { RequestOptions } from 'https'
-import { LoaderFunctionParams } from './types'
-import { renderToPipeableStream } from 'react-dom/server'
-import App from './App'
+import { LoaderFunctionParams } from '../types'
+import { ChunkExtractor } from '@loadable/server'
+import path from 'path'
 
 const app = express();
 
@@ -19,13 +19,14 @@ app.use('/api',proxy('http://react-ssr-api.herokuapp.com',
   }
 }
 ));
-app.use(express.static('./dist-client', { index: false }))
-app.get('*', (req, res) => {
+app.use(express.static('./dist/client', { index: false }))
+
+app.get("*",(req, res) => {
+  const statsFile = path.resolve('./dist/client/loadable-stats.json')
   const store = createStore(req);
 
   const loaderArgs :LoaderFunctionArgs =  store  as LoaderFunctionParams
   res.setHeader('content-type', 'text/html');
-
   const promises = matchRoutes(routes,req.path)?.map(({route})=>{
     return route.loader? route.loader(loaderArgs):null;
   }).map((promise: Promise<any>)=> {
@@ -35,14 +36,16 @@ app.get('*', (req, res) => {
       })
     }
   })
+  const extractor = new ChunkExtractor({ statsFile })
+  const scriptTags = extractor.getScriptTags()
 
   if(promises){
     Promise.all(promises).then(()=> {
-      res.send(renderer(req,store));
+      res.send(renderer(req,store,scriptTags));
   })
 }
 else{
-  res.send(renderer(req,store));
+  res.send(renderer(req,store,scriptTags));
 }
 })
 

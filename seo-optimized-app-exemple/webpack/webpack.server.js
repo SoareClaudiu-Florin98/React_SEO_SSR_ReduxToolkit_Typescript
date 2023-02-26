@@ -1,10 +1,11 @@
 const path = require('path')
 const webpackNodeExternals = require('webpack-node-externals')
+const LoadablePlugin = require('@loadable/webpack-plugin')
 
 module.exports = {
   mode: 'development',
   target: 'node',
-  entry: path.resolve(__dirname, '..', './src/server.ts'),
+  entry: path.resolve(__dirname, '..', './src/server/server.ts'),
   devtool: 'source-map',
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
@@ -30,8 +31,8 @@ module.exports = {
 
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname, '..', './dist'),
+    path: path.resolve(__dirname, '..', './dist/server'),
   },
-  plugins: [],
+  plugins: [new LoadablePlugin()],
   externals: [webpackNodeExternals()],
 }

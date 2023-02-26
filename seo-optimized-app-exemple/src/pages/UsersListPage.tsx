@@ -2,7 +2,7 @@ import {fetchUsers} from '../services/userService'
 import { useEffect } from 'react';
 import { RootState } from '../store';
 import { useAppDispatch, useAppSelector } from '../hooks/useTypedSelector';
-import { Helmet } from 'react-helmet'
+import { Helmet } from 'react-helmet-async';
 
 
 const UsersListPage =() => {

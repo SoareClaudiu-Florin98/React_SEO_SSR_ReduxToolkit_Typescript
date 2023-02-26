@@ -1,10 +1,16 @@
-import AppPage from './pages/AppPage'
 import UsersListPage, { loadUserList } from './pages/UsersListPage'
 import { RouteObject, useRoutes } from "react-router-dom";
 import App, { loadCurrentUser } from './App'
 import NotFoundPage from './pages/NotFoundPage';
-import AdminsListPage, { loadAdminsList } from './pages/AdminsListPage';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute ';
+import loadable from '@loadable/component'
+import AdminsListPage, { loadAdminsList } from './pages/AdminsListPage';
+import AppPage from './pages/AppPage';
+
+//const AppPage = loadable(() => import('./pages/AppPage'),{ssr: true})
+//const UsersListPage = loadable(() => import('./pages/UsersListPage'),{ssr: true})
+
+//const AdminsListPage = loadable(() => import('./pages/AdminsListPage'),{ssr: true})
 
 const routes: RouteObject[] = [
   {
@@ -14,22 +20,23 @@ const routes: RouteObject[] = [
     children: [
       {
         path: "/",
-        element: <AppPage />,
+        element: <AppPage />
       },
       {
-        path: "users",
+        path: "/users",
         element: <ProtectedRoute to='/login-user'><UsersListPage /></ProtectedRoute>,
         loader: loadUserList
-       },
-       {
-        path: "admins",
-        element: <ProtectedRoute to='/login'><AdminsListPage /></ProtectedRoute>,
-        loader: loadAdminsList
-       },
-       {
-        path:"*",
-        element: <NotFoundPage />
-       }
+      },
+      {
+       path: "/admins",
+       element: <ProtectedRoute to='/login'><AdminsListPage /></ProtectedRoute>,
+       loader: loadAdminsList
+
+      },
+      {
+       path:"*",
+       element: <NotFoundPage />
+      }
     ]
   }
 ];

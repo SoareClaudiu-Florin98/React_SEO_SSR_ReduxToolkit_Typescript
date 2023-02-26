@@ -1,5 +1,5 @@
 import React from 'react'
-import ReactDOM from 'react-dom/client'
+import ReactDOM from 'react-dom'
 import './index.css'
 import { BrowserRouter } from 'react-router-dom'
 import reportWebVitals from './reportWebVitals'
@@ -8,6 +8,8 @@ import { Provider } from 'react-redux'
 import Routes from './Routes'
 import rootReducer  from './reducers'
 import axios from 'axios'
+import { HelmetProvider } from 'react-helmet-async';
+import { loadableReady } from '@loadable/component'
 import { hydrateRoot } from 'react-dom/client';
 
 const domNode = document.getElementById('root') as HTMLElement;
@@ -26,15 +28,17 @@ const store = configureStore({
     }),
 })
 
-hydrateRoot(domNode,
-  <Provider store={store}>
-  <React.StrictMode>
-    <BrowserRouter>
-      <Routes />
-    </BrowserRouter>
-  </React.StrictMode>
-</Provider>);
-
+loadableReady(() => {
+  ReactDOM.hydrate(<Provider store={store}>
+    <HelmetProvider>
+      <React.StrictMode>
+        <BrowserRouter>
+          <Routes />
+        </BrowserRouter>
+      </React.StrictMode>
+  </HelmetProvider>
+</Provider>, document.querySelector('#root'))
+})
 declare global {
   interface Window { INITIAL_STATE: any; }
 }
